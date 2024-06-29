@@ -3,13 +3,40 @@
   "version": "1.0.0",
   "description": "",
   "private": "true",
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "libs/*"
+    ]
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "format": "prettier  \"{apps,libs}/**/*.{ts,tsx,js,json}\"  --ignore-path .prettierignore --ignore-path .gitignore",
+    "format:check": "pnpm format --check",
+    "format:write": "pnpm format --write",
+    "tsc": "pnpx nx run-many -t tsc",
+    "lint": "pnpx nx run-many -t lint",
+    "build": "pnpx nx run-many -t build",
+    "dev": "pnpx nx run-many -t dev",
+    "dev:api": "pnpx nx run api:dev",
+    "dev:client": "pnpx nx run client:dev",
+    "validate": "pnpm format:write && pnpm tsc && pnpm lint && pnpm build",
+    "prepare": "husky install",
+    "cm": "cz",
+    "cm:offline": "git add . && cz",
+    "cm:all": "git add . && cz && git push",
+    "cloc": "npx cloc --exclude-dir=node_modules,dist,build,pnpx.lock,package.json,generated.tsx,.next,.nx ."
   },
   "keywords": [],
   "author": "Vaibhav Chopra",
   "license": "ISC",
   "devDependencies": {
-    "typescript": "^5.5.2"
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "commitizen": "^4.3.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.2.7",
+    "prettier": "^3.0.0",
+    "typescript": "^5.5.2",
+    "nx": "19.3.2"
   }
 }
