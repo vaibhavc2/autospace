@@ -1,8 +1,12 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
     "target": "ESNext",
     "module": "CommonJS",
-    "strict": true
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   },
   "exclude": ["node_modules"]
 }
