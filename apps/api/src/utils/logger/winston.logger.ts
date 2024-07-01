@@ -1,12 +1,9 @@
-import { ConfigService } from '@nestjs/config';
 import { WinstonModule } from 'nest-winston';
+import { envConstants } from 'src/constants/env.constants';
 import { format, transports } from 'winston';
 import 'winston-daily-rotate-file';
-import { EnvService } from '../env/env.service';
 
-const envService = new EnvService(new ConfigService());
-
-const isDev = envService.get('NODE_ENV') === 'development';
+const { isDev } = envConstants;
 
 export const logger = WinstonModule.createLogger({
   transports: [
