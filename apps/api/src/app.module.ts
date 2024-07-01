@@ -1,13 +1,17 @@
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { configSchema } from './env/config/config.schema';
-import { EnvModule } from './env/env.module';
 import { UsersModule } from './users/users.module';
+import { configSchema } from './utils/env/config/config.schema';
+import { EnvModule } from './utils/env/env.module';
+import { PrismaModule } from './utils/prisma/prisma.module';
+import { HealthModule } from './utils/health/health.module';
 
 @Module({
   imports: [
@@ -29,9 +33,19 @@ import { UsersModule } from './users/users.module';
       buildSchemaOptions: {
         numberScalarMode: 'integer',
       },
+      playground: false,
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, //TODO: implement as AuthGuard, etc. for production
+        limit: 100,
+      },
+    ]),
     EnvModule,
     UsersModule,
+    PrismaModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

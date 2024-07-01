@@ -1,24 +1,34 @@
+import { VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import cookieParser from 'cookie-parser';
+import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-import { EnvService } from './env/env.service';
+import { EnvService } from './utils/env/env.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    cors: true,
     logger: ['error', 'warn'],
   });
+  app.enableCors(); //TODO: setup CORS gracefully in production
   app.use(cookieParser());
-  // app.enableVersioning({
-  //   type: VersioningType.URI,
-  //   defaultVersion: '1',
-  //   prefix: 'v',
-  // });
+  app.enableVersioning({
+    // this is for REST API versioning
+    type: VersioningType.URI,
+    defaultVersion: '1',
+    prefix: 'v',
+  });
 
   const configService = app.get(EnvService);
   const port = configService.get('PORT');
+  const devEnv = configService.get('NODE_ENV') === 'development';
 
-  await app.listen(port, 'localhost');
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  await app.listen(port);
+
+  if (devEnv) {
+    const address = await app.getHttpServer().address().address;
+    const url = `http://${address === '::' ? 'localhost' : address}:${port}`;
+
+    console.log(`Application is running on: ${url}`);
+    console.log(`GraphQL Playground is running on: ${url}/graphql`);
+  }
 }
 bootstrap();
