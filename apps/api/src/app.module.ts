@@ -1,17 +1,18 @@
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { RequestLoggerMiddleware } from './middlewares/request-logger.middleware';
 import { UsersModule } from './users/users.module';
 import { configSchema } from './utils/env/config/config.schema';
 import { EnvModule } from './utils/env/env.module';
-import { PrismaModule } from './utils/prisma/prisma.module';
 import { HealthModule } from './utils/health/health.module';
+import { PrismaModule } from './utils/prisma/prisma.module';
 
 @Module({
   imports: [
@@ -50,4 +51,9 @@ import { HealthModule } from './utils/health/health.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  // logger middleware on all routes
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestLoggerMiddleware).forRoutes('*');
+  }
+}
