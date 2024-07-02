@@ -11,7 +11,7 @@ import { envConstants } from './constants/env.constants';
 import { swaggerConfig } from './docs/swagger.config';
 import { logger } from './utils/logger/winston.logger';
 
-const { port, isDev } = envConstants;
+const { PORT, isDev } = envConstants;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -30,15 +30,14 @@ async function bootstrap() {
   SwaggerModule.setup('/', app, document);
 
   // start the app
-  await app.listen(port);
+  await app.listen(PORT, 'localhost');
 
-  // log the server address in development
+  // log the server address (will work only in development due to logger setup)
   if (isDev) {
-    const address = await app.getHttpServer().address().address;
-    const url = `http://${address === '::' ? 'localhost' : address}:${port}`;
-
+    const url = await app.getUrl();
     logger.log(`=> API is running on: '${url}'`);
     logger.log(`=> Apollo Sandbox for GraphQL is running on: '${url}/graphql'`);
   }
 }
+
 bootstrap();
