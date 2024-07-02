@@ -20,7 +20,7 @@ export const helmetDevelopmentConfig = {
   },
 };
 
-export const restApiVersioningConfig = {
+export const versioningConfig = {
   type: VersioningType.URI,
   defaultVersion: '1',
   prefix: 'v',

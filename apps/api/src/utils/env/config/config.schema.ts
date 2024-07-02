@@ -9,8 +9,8 @@ export const configSchema = z.object({
     .default(
       'postgres://postgres:password@localhost:5432/autospace_db?schema=public',
     ),
-  JWT_SECRET: z.string().min(32).default('jwt_secret'),
-  JWT_MAX_AGE: z.string().default('1d'),
+  JWT_SECRET: z.string().min(32),
+  JWT_MAX_AGE: z.string().default('60s'),
 });
 
 export type EnvConfig = Required<z.infer<typeof configSchema>>;

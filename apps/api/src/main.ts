@@ -5,25 +5,31 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 import {
   helmetDevelopmentConfig,
-  restApiVersioningConfig,
+  versioningConfig,
 } from './constants/bootstrap.constants';
-import { envConstants } from './constants/env.constants';
 import { swaggerConfig } from './docs/swagger.config';
-import { logger } from './utils/logger/winston.logger';
-
-const { PORT, isDev } = envConstants;
+import { EnvService } from './utils/env/env.service';
+import { LoggerService } from './utils/logger/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: logger,
+    logger: false, // disable the default logger
   });
+
+  // environment variables
+  const configService = app.get(EnvService);
+  const { envConfig, isDev } = configService;
+  const { PORT } = envConfig;
+
+  // custom logger setup with winston
+  const logger = app.get(LoggerService).getLogger();
+  app.useLogger(logger);
 
   // middlewares
   app.enableCors(); //TODO: setup CORS gracefully in production
-  app.use(cookieParser());
-  app.enableVersioning(restApiVersioningConfig);
-  app.use(helmet(isDev ? helmetDevelopmentConfig : {}));
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api'); // set the global prefix for the REST API
+  app.enableVersioning(versioningConfig); // enable versioning for the REST API
+  app.use(cookieParser(), helmet(isDev ? helmetDevelopmentConfig : {}));
 
   // setup the swagger docs
   const document = SwaggerModule.createDocument(app, swaggerConfig);
