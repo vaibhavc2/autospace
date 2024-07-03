@@ -20,9 +20,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prisma:migrate": "pnpm prisma migrate dev",
-    "prisma:studio": "pnpm prisma studio",
-    "prisma:generate": "pnpm prisma generate"
+    "prisma:migrate": "yarn prisma migrate dev",
+    "prisma:studio": "yarn prisma studio",
+    "prisma:generate": "yarn prisma generate"
   },
   "dependencies": {
     "@apollo/server": "^4.10.4",
